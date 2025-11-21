@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+
+model User {
+  id          Int        @id @default(autoincrement())
+  name        String
+  email       String     @unique
+  password    String
+  role        String     @default("user")
+  authorityId Int?
+  authority   Authority? @relation(fields: [authorityId], references: [id])
+  createdAt   DateTime   @default(now())
+  issues      Issue[]
+}
+
+model Authority {
+  id       Int    @id @default(autoincrement())
+  name     String @unique
+  level    String
+  parentId Int?
+
+  issues Issue[]
+  users  User[]
+}
+
+
+model IssueType {
+  id        Int     @id @default(autoincrement())
+  name      String  @unique
+  authority String
+  issues    Issue[]
+}
+
+// Issues
+model Issue {
+  id                 Int        @id @default(autoincrement())
+  title              String
+  description        String
+  category           String
+  imageUrl           String?
+  userId             Int
+  user               User       @relation(fields: [userId], references: [id])
+  issueTypeId        Int?
+  issueType          IssueType? @relation(fields: [issueTypeId], references: [id])
+  currentAuthorityId Int?
+  currentAuthority   Authority? @relation(fields: [currentAuthorityId], references: [id])
+  status             String     @default("Pending")
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+
+  aiFilled           Boolean    @default(false)
+  aiConfidence       Float?
+
+  latitude           Float?
+  longitude          Float?
+}
+

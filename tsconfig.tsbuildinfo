@@ -1,0 +1,1 @@
+{"root":["./src/db.ts","./src/index.ts","./src/routes/auth.ts","./src/routes/issues.ts","./src/utils/ai.ts","./src/utils/cloudinary.ts"],"version":"5.9.3"}
